@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Cotação Réveillon — 30/12 a 02/01</title>
+  <style>
+    :root {
+      --bg: #f4f1ea; --ink: #1c1917; --muted: #57534e; --line: #d6d3d1; --card: #fffcf7;
+      --pad: max(16px, env(safe-area-inset-left)); --padr: max(16px, env(safe-area-inset-right));
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg); color: var(--ink); line-height: 1.45;
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+    header { padding: 20px var(--padr) 8px var(--pad); }
+    h1 { margin: 0 0 8px; font-size: 1.45rem; font-weight: 650; }
+    .sub { color: var(--muted); margin: 0; font-size: 0.95rem; }
+    .filters {
+      position: sticky; top: 0; z-index: 5; background: var(--bg);
+      display: grid; grid-template-columns: 1fr; gap: 10px;
+      padding: 12px var(--padr) 12px var(--pad); border-bottom: 1px solid var(--line);
+    }
+    label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+    select, input[type="search"] {
+      width: 100%; min-height: 44px; border: 1px solid var(--line); background: var(--card);
+      color: var(--ink); padding: 0 12px; font-size: 16px; border-radius: 8px;
+    }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px var(--padr) 8px var(--pad); }
+    .stat { background: var(--card); border: 1px solid var(--line); padding: 10px 12px; border-radius: 8px; }
+    .stat b { display: block; font-size: 1rem; }
+    .stat span { font-size: 12px; color: var(--muted); }
+    .hint { padding: 0 var(--padr) 8px var(--pad); font-size: 13px; color: var(--muted); }
+    .cards { padding: 0 var(--padr) 24px var(--pad); display: grid; gap: 12px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+    .card h2 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 650; }
+    .meta { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 14px; }
+    .k { color: var(--muted); font-size: 12px; display: block; }
+    .total { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); font-weight: 650; }
+    .empty { padding: 24px var(--pad); color: var(--muted); }
+    noscript { display: block; margin: 12px var(--pad); padding: 12px; background: #fef3c7; border-radius: 8px; }
+    .desktop { display: none; }
+    @media (min-width: 900px) {
+      .filters { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 1400px; margin: 0 auto; }
+      header, .hint, .cards, .empty { max-width: 1400px; margin-left: auto; margin-right: auto; }
+      .mobile { display: none; }
+      .desktop { display: block; }
+      .wrap { max-width: 1400px; margin: 0 auto 40px; padding: 0 16px; overflow: auto; max-height: calc(100vh - 280px); background: var(--card); border: 1px solid var(--line); }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; text-align: left; }
+      th { position: sticky; top: 0; background: #ece8e1; z-index: 1; }
+      td.num, th.num { text-align: right; }
+      tbody tr:nth-child(even) { background: #faf7f2; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cotação Réveillon — 30/12 a 02/01</h1>
+    <p class="sub">2 garrafas por dia, sem misturar gin, whisky e vodka. Gelo igual em gin, whisky e vodka (8 × R$ 1,20 por garrafa). 3 energéticos. Sobra = um tipo de lata.</p>
+  </header>
+  <noscript>Ative o JavaScript ou abra este link no Safari / Chrome. O WhatsApp não mostra a tabela.</noscript>
+  <div class="filters">
+    <label>Dia
+      <select id="dia">
+        <option value="todos">Todos os dias</option>
+        <option value="30/12" selected>30/12 · R$ 300</option>
+        <option value="31/12">31/12 · R$ 600</option>
+        <option value="01/01">01/01 · R$ 600</option>
+        <option value="02/01">02/01 · R$ 300</option>
+      </select>
+    </label>
+    <label>Categoria
+      <select id="cat">
+        <option value="todas">Todas</option>
+        <option value="gin" selected>Só gin</option>
+        <option value="whisky">Só whisky</option>
+        <option value="vodka">Só vodka</option>
+      </select>
+    </label>
+    <label>Completar com
+      <select id="lata">
+        <option value="todas">Todas as latas</option>
+        <option value="Cheque Mate">Cheque Mate</option>
+        <option value="Skol Beats">Skol Beats</option>
+        <option value="Smirnoff Ice">Smirnoff Ice</option>
+        <option value="Heineken">Heineken</option>
+        <option value="Império">Império</option>
+        <option value="Brahma Duplo Malte">Brahma Duplo Malte</option>
+        <option value="Brahma Duplo Malte grande">Brahma Duplo Malte grande</option>
+        <option value="Budweiser">Budweiser</option>
+        <option value="Amstel">Amstel</option>
+        <option value="Spatten">Spatten</option>
+        <option value="Corona">Corona</option>
+      </select>
+    </label>
+    <label>Buscar garrafa
+      <input type="search" id="busca" placeholder="Ex.: Roku, Jack, Absolut" enterkeyhint="search" />
+    </label>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="nLinhas">…</b><span>Combinações</span></div>
+    <div class="stat"><b id="orc">…</b><span>Orçamento</span></div>
+    <div class="stat"><b id="faixa">…</b><span>Custo base</span></div>
+    <div class="stat"><b id="sobra">…</b><span>Sobra p/ latas</span></div>
+  </div>
+  <p class="hint mobile">No celular cada combinação aparece em um cartão. Use os filtros no topo.</p>
+  <div id="cards" class="cards mobile"></div>
+  <div class="wrap desktop">
+    <table>
+      <thead>
+        <tr>
+          <th>Dia</th><th class="num">Orçamento</th><th>Categoria</th><th>2 garrafas</th>
+          <th class="num">Garrafas</th><th class="num">Gelo</th><th class="num">Energético</th>
+          <th class="num">Base</th><th class="num">Sobra p/ lata</th><th>Completar</th>
+          <th class="num">Qtd</th><th class="num">Latas</th><th class="num">Total</th><th class="num">Sobra final</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+<script>
+const GELO = 1.2, GELOS = 8, ENERGETICO = 7, ENER_QTD = 3, N_GARRAFAS = 2;
+const GARRAFAS = [
+  ["Gin Rocks", 20, "gin"], ["Gin Seagers", 30, "gin"], ["Gin Gordons", 44.49, "gin"],
+  ["Gin Beefeater", 55.49, "gin"], ["Gin Tanqueray", 69.90, "gin"], ["Gin Bombay", 75, "gin"], ["Gin Roku", 120, "gin"],
+  ["Whisky Jack tradicional", 90.90, "whisky"], ["Whisky Jack maçã verde", 94.99, "whisky"],
+  ["Whisky Jack mel", 99.90, "whisky"], ["Whisky Red Label", 62.49, "whisky"],
+  ["Whisky Black Label", 112.90, "whisky"], ["Whisky Gold Label", 174.99, "whisky"],
+  ["Vodka Smirnoff", 30, "vodka"], ["Vodka Absolut", 70, "vodka"], ["Vodka Absolut sabor", 75, "vodka"],
+  ["Vodka Cîroc tradicional", 100, "vodka"], ["Vodka Cîroc frutas vermelhas", 152, "vodka"]
+];
+const LATAS = [
+  ["Cheque Mate", 6.99], ["Skol Beats", 4.35], ["Smirnoff Ice", 4.49], ["Heineken", 3.59],
+  ["Império", 2.30], ["Brahma Duplo Malte", 2.50], ["Brahma Duplo Malte grande", 4.40],
+  ["Budweiser", 2.40], ["Amstel", 2.30], ["Spatten", 2.60], ["Corona", 5.50]
+];
+const DIAS = [
+  { id: "30/12", orc: 300, filtro: "abaixo" },
+  { id: "31/12", orc: 600, filtro: "acima" },
+  { id: "01/01", orc: 600, filtro: "acima" },
+  { id: "02/01", orc: 300, filtro: "abaixo" }
+];
+const r2 = n => Math.round((n + 1e-9) * 100) / 100;
+const brl = n => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const titulo = c => ({ gin: "Gin", whisky: "Whisky", vodka: "Vodka" })[c];
+function pares(lista) {
+  const out = [];
+  for (let i = 0; i < lista.length; i++) for (let j = i; j < lista.length; j++) out.push([lista[i], lista[j]]);
+  return out;
+}
+function rotulo(a, b) { return a[0] === b[0] ? "2× " + a[0] : a[0] + " + " + b[0]; }
+const LINHAS = [];
+const energia = r2(ENER_QTD * ENERGETICO);
+for (const dia of DIAS) {
+  for (const cat of ["gin", "whisky", "vodka"]) {
+    const pool = GARRAFAS.filter(g => g[2] === cat && (dia.filtro === "abaixo" ? g[1] < 60 : g[1] > 60));
+    if (!pool.length) continue;
+    for (const [a, b] of pares(pool)) {
+      const geloQtd = GELOS * N_GARRAFAS;
+      const gelo = r2(geloQtd * GELO);
+      const gtot = r2(a[1] + b[1]);
+      const base = r2(gtot + gelo + energia);
+      const sobraBase = r2(dia.orc - base);
+      if (sobraBase < 0) continue;
+      for (const [lnome, lpreco] of LATAS) {
+        const qtd = Math.floor(sobraBase / lpreco);
+        const ltot = r2(qtd * lpreco);
+        const total = r2(base + ltot);
+        LINHAS.push({ dia: dia.id, orc: dia.orc, cat, par: rotulo(a, b), gtot, geloQtd, gelo, energia, base, sobraBase, lata: lnome, qtd, ltot, total, sobraFinal: r2(dia.orc - total) });
+      }
+    }
+  }
+}
+const elDia = document.getElementById("dia");
+const elCat = document.getElementById("cat");
+const elLata = document.getElementById("lata");
+const elBusca = document.getElementById("busca");
+function filtrar() {
+  const dia = elDia.value, cat = elCat.value, lata = elLata.value, q = elBusca.value.trim().toLowerCase();
+  return LINHAS.filter(l => {
+    if (dia !== "todos" && l.dia !== dia) return false;
+    if (cat !== "todas" && l.cat !== cat) return false;
+    if (lata !== "todas" && l.lata !== lata) return false;
+    if (q && !l.par.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+function cell(l) {
+  return `<tr><td>${l.dia}</td><td class="num">${brl(l.orc)}</td><td>${titulo(l.cat)}</td><td>${l.par}</td><td class="num">${brl(l.gtot)}</td><td class="num">${l.geloQtd ? l.geloQtd + " · " + brl(l.gelo) : "—"}</td><td class="num">3 · ${brl(l.energia)}</td><td class="num">${brl(l.base)}</td><td class="num">${brl(l.sobraBase)}</td><td>${l.lata}</td><td class="num">${l.qtd}</td><td class="num">${brl(l.ltot)}</td><td class="num">${brl(l.total)}</td><td class="num">${brl(l.sobraFinal)}</td></tr>`;
+}
+function card(l) {
+  return `<article class="card"><h2>${l.par}</h2><div class="meta">${l.dia} · ${titulo(l.cat)} · orçamento ${brl(l.orc)}</div><div class="grid"><div><span class="k">Garrafas</span>${brl(l.gtot)}</div><div><span class="k">Gelo</span>${l.geloQtd ? l.geloQtd + " · " + brl(l.gelo) : "sem gelo"}</div><div><span class="k">Energético</span>3 · ${brl(l.energia)}</div><div><span class="k">Base</span>${brl(l.base)}</div><div><span class="k">Completar</span>${l.qtd}× ${l.lata}</div><div><span class="k">Latas</span>${brl(l.ltot)}</div></div><div class="total">Total ${brl(l.total)} · sobra ${brl(l.sobraFinal)}</div></article>`;
+}
+function render() {
+  const rows = filtrar();
+  document.getElementById("nLinhas").textContent = rows.length.toLocaleString("pt-BR");
+  const bases = [], seen = new Set();
+  for (const l of rows) { const k = l.dia + l.par + l.base; if (!seen.has(k)) { seen.add(k); bases.push(l); } }
+  if (rows.length) {
+    document.getElementById("orc").textContent = [...new Set(rows.map(r => r.orc))].map(brl).join(" / ");
+    document.getElementById("faixa").textContent = brl(Math.min(...bases.map(b => b.base))) + " a " + brl(Math.max(...bases.map(b => b.base)));
+    document.getElementById("sobra").textContent = brl(Math.min(...bases.map(b => b.sobraBase))) + " a " + brl(Math.max(...bases.map(b => b.sobraBase)));
+  } else {
+    document.getElementById("orc").textContent = "—";
+    document.getElementById("faixa").textContent = "—";
+    document.getElementById("sobra").textContent = "—";
+  }
+  const mobile = window.matchMedia("(max-width: 899px)").matches;
+  if (mobile) {
+    document.getElementById("cards").innerHTML = rows.length ? rows.map(card).join("") : `<p class="empty">Nenhuma combinação neste filtro. Whisky só nos dias 31 e 01.</p>`;
+    document.getElementById("tbody").innerHTML = "";
+  } else {
+    document.getElementById("cards").innerHTML = "";
+    document.getElementById("tbody").innerHTML = rows.map(cell).join("") || `<tr><td colspan="14">Nenhuma combinação neste filtro.</td></tr>`;
+  }
+}
+elDia.onchange = elCat.onchange = elLata.onchange = elBusca.oninput = render;
+window.matchMedia("(max-width: 899px)").addEventListener("change", render);
+render();
+</script>
+</body>
+</html>
